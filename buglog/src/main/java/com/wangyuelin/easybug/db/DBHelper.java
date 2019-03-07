@@ -6,15 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.liulishuo.okdownload.OkDownloadProvider;
+import com.wangyuelin.easybug.info.LogBean;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 class DBHelper extends SQLiteOpenHelper {
 
-    private static final String DB_CACHE_NAME = "download_file.db";
     private static final int DB_CACHE_VERSION = 1;
-    static String TABLE_DOWNLOAD_PRE = "download";
 
     static final Lock lock = new ReentrantLock();
 
@@ -25,21 +24,16 @@ class DBHelper extends SQLiteOpenHelper {
     }
 
     DBHelper(Context context) {
-        super(context, DB_CACHE_NAME, null, DB_CACHE_VERSION);
+        super(context, DBUtils.getTableName(), null, DB_CACHE_VERSION);
 
 
-        downloadTableEntity.addColumn(new ColumnEntity(DownloadStateTask.TAG, "VARCHAR", true, false))//
-                .addColumn(new ColumnEntity(DownloadStateTask.ID, "INTEGER"))
-                .addColumn(new ColumnEntity(DownloadStateTask.FILE_NAME, "VARCHAR"))
-                .addColumn(new ColumnEntity(DownloadStateTask.SAVE_NAME, "VARCHAR"))
-                .addColumn(new ColumnEntity(DownloadStateTask.CURRENT_SZIE, "INTEGER"))
-                .addColumn(new ColumnEntity(DownloadStateTask.TOTAL_SIZE, "INTEGER"))
-                .addColumn(new ColumnEntity(DownloadStateTask.PATH, "VARCHAR"))
-                .addColumn(new ColumnEntity(DownloadStateTask.STATE, "INTEGER"))
-                .addColumn(new ColumnEntity(DownloadStateTask.URL, "INTEGER"))
-                .addColumn(new ColumnEntity(DownloadStateTask.DATE, "INTEGER"))
-                .addColumn(new ColumnEntity(DownloadStateTask.FILE_TYPE, "VARCHAR"))
-                .addColumn(new ColumnEntity(DownloadStateTask.EXTRA, "VARCHAR"));
+        downloadTableEntity
+                .addColumn(new ColumnEntity(LogBean.CLASS_NAME, "VARCHAR"))
+                .addColumn(new ColumnEntity(LogBean.METHOD_NAME, "VARCHAR"))
+                .addColumn(new ColumnEntity(LogBean.TIME, "INTEGER"))
+                .addColumn(new ColumnEntity(LogBean.ARGS, "VARCHAR"))
+                .addColumn(new ColumnEntity(LogBean.EXECPTION, "VARCHAR"))
+                .addColumn(new ColumnEntity(LogBean.ERROR, "VARCHAR"));
     }
 
     @Override

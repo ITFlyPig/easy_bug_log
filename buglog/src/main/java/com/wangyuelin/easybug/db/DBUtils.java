@@ -85,7 +85,7 @@ public class DBUtils {
      * @return
      */
     public static String getTableName() {
-        return "log_db";
+        return "log_db.db";
 
     }
 }
