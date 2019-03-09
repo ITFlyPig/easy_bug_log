@@ -64,4 +64,12 @@ public class LogBean {
         values.put(TIME, bean.time);
         return values;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("LogBean:[ className = " + className + "] [methodName=" + methodName + "] [time=" + time + "] [argsStr=" + (argsStr == null ? "" : argsStr)
+                + "] [execptionStr=" + (execptionStr == null ? "" : execptionStr) + "] 【errorStr=" + (errorStr == null ? "" : errorStr) + "]");
+        return buffer.toString();
+    }
 }

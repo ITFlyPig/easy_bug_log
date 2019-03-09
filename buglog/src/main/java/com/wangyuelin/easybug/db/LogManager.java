@@ -68,5 +68,4 @@ public class LogManager extends BaseDao<LogBean> {
        return query(LogBean.TIME + ">? AND" + LogBean.TIME +" <?", new String[]{String.valueOf(startTime), String.valueOf(endTime)});
     }
 
-
 }

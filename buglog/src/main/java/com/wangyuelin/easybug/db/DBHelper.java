@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.liulishuo.okdownload.OkDownloadProvider;
+import com.wangyuelin.easybug.EasyLog;
 import com.wangyuelin.easybug.info.LogBean;
 
 import java.util.concurrent.locks.Lock;
@@ -20,7 +20,7 @@ class DBHelper extends SQLiteOpenHelper {
     private TableEntity downloadTableEntity = new TableEntity(DBUtils.getTableName());
 
     DBHelper() {
-        this(OkDownloadProvider.context);//这个解决方案不太好
+        this(EasyLog.getInstance().getLogConf().getContext());//这个解决方案不太好
     }
 
     DBHelper(Context context) {

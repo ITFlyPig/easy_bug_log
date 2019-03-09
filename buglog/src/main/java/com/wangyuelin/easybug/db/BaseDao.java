@@ -380,6 +380,30 @@ public abstract class BaseDao<T> {
         return list;
     }
 
+
+    /**
+     * 弥补泛型的不足，在这里查询可以使用函数或者只是查询一个数据
+     * @param sql
+     * @return
+     */
+    public String queryOne(String sql) {
+        lock.lock();
+        Cursor cursor = null;
+        try {
+            database.beginTransaction();
+            database.rawQuery(sql, null);
+             cursor.moveToFirst();
+            String result = cursor.getCount() > 0 ? cursor.getString(0) : null;
+            database.setTransactionSuccessful();
+            return result;
+
+        } finally {
+            closeDatabase(null, cursor);
+            database.endTransaction();
+            lock.unlock();
+        }
+    }
+
     public interface Action {
         void call(SQLiteDatabase database);
     }
