@@ -1,23 +1,20 @@
 package com.wangyuelin.easybug.info;
 
-import android.util.Log;
-
-import com.wangyuelin.easybug.EasyLog;
-
-import java.util.LinkedList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 public class LogBeanCache {
-    private LinkedList<LogBean> pool = new LinkedList<>();
-    private ReentrantLock lock = new ReentrantLock();
-    private Condition empty = lock.newCondition();
 
-    private int totalSize;//总的容量，默认的容量是100个实体
-    private int count;//统计new出的bean的个数
+    public ObjectPool<LogBean> logbeanPool;
 
     private LogBeanCache() {
-        totalSize = EasyLog.getInstance().getLogConf().getMaxPoolSize();
+        GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+        config.setMaxTotal(100);
+        logbeanPool = new GenericObjectPool<>(new LogBeanFactory(), config);
     }
 
     private static class Holder {
@@ -28,63 +25,18 @@ public class LogBeanCache {
         return Holder.logBeanCache;
     }
 
-    /**
-     * 获取一个可用的实例
-     *
-     * @return
-     */
-    public  LogBean get() {
-        lock.lock();
-        try {
-            LogBean logBean = null;
-            while (pool.size() == 0 && count >= totalSize) {//借出去的和总数一样了，不能继续借了
-                try {
-                    Log.e("wyl", "bean不够，开始阻塞");
-                    empty.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
-            }
+    private static class LogBeanFactory extends BasePooledObjectFactory<LogBean> {
 
-            //可以借
-            if (pool.size() == 0) {
-                logBean = new LogBean();
-                count++;
-                Log.e("wyl", "新new出bean实例");
-            } else {
-                logBean = pool.remove(0);
-                Log.e("wyl", "bean够，从池中获取");
-
-            }
-            return logBean;
-        } finally {
-            lock.unlock();
+        @Override
+        public LogBean create() throws Exception {
+            return new LogBean();
         }
 
-
-    }
-
-    /**
-     * 将不使用的放入池中
-     *
-     * @param logBean
-     */
-    public  void putBack(LogBean logBean) {
-        if (logBean == null) {
-            return;
+        @Override
+        public PooledObject<LogBean> wrap(LogBean obj) {
+            return new DefaultPooledObject<>(obj);
         }
-        lock.lock();
-        try {
-            logBean.reset();
-            pool.add(logBean);
-            empty.signal();
-            Log.e("wyl", "将使用完的bean实例放入池中");
-
-        } finally {
-            lock.unlock();
-        }
-
 
     }
 

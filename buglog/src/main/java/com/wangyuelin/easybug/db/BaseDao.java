@@ -55,7 +55,9 @@ public abstract class BaseDao<T> {
         if (database != null && database.isOpen()) database.close();
     }
 
-    /** 插入一条记录 */
+    /**
+     * 插入一条记录
+     */
     public boolean insert(T t) {
         if (t == null) return false;
         long start = System.currentTimeMillis();
@@ -75,12 +77,16 @@ public abstract class BaseDao<T> {
         return false;
     }
 
-    /** 插入一条记录 */
+    /**
+     * 插入一条记录
+     */
     public long insert(SQLiteDatabase database, T t) {
         return database.insert(getTableName(), null, getContentValues(t));
     }
 
-    /** 插入多条记录 */
+    /**
+     * 插入多条记录
+     */
     public boolean insert(List<T> ts) {
         if (ts == null) return false;
         long start = System.currentTimeMillis();
@@ -114,17 +120,23 @@ public abstract class BaseDao<T> {
         }
     }
 
-    /** 删除所有数据 */
+    /**
+     * 删除所有数据
+     */
     public boolean deleteAll() {
         return delete(null, null);
     }
 
-    /** 删除所有数据 */
+    /**
+     * 删除所有数据
+     */
     public long deleteAll(SQLiteDatabase database) {
         return delete(database, null, null);
     }
 
-    /** 根据条件删除数据库中的数据 */
+    /**
+     * 根据条件删除数据库中的数据
+     */
     public boolean delete(String whereClause, String[] whereArgs) {
         long start = System.currentTimeMillis();
         lock.lock();
@@ -143,7 +155,9 @@ public abstract class BaseDao<T> {
         return false;
     }
 
-    /** 根据条件删除数据库中的数据 */
+    /**
+     * 根据条件删除数据库中的数据
+     */
     public long delete(SQLiteDatabase database, String whereClause, String[] whereArgs) {
         return database.delete(getTableName(), whereClause, whereArgs);
     }
@@ -255,7 +269,9 @@ public abstract class BaseDao<T> {
         }
     }
 
-    /** 更新一条记录 */
+    /**
+     * 更新一条记录
+     */
     public boolean update(T t, String whereClause, String[] whereArgs) {
         if (t == null) return false;
         long start = System.currentTimeMillis();
@@ -275,12 +291,16 @@ public abstract class BaseDao<T> {
         return false;
     }
 
-    /** 更新一条记录 */
+    /**
+     * 更新一条记录
+     */
     public long update(SQLiteDatabase database, T t, String whereClause, String[] whereArgs) {
         return database.update(getTableName(), getContentValues(t), whereClause, whereArgs);
     }
 
-    /** 更新一条记录 */
+    /**
+     * 更新一条记录
+     */
     public boolean update(ContentValues contentValues, String whereClause, String[] whereArgs) {
         long start = System.currentTimeMillis();
         lock.lock();
@@ -299,29 +319,39 @@ public abstract class BaseDao<T> {
         return false;
     }
 
-    /** 更新一条记录 */
+    /**
+     * 更新一条记录
+     */
     public long update(SQLiteDatabase database, ContentValues contentValues, String whereClause, String[] whereArgs) {
         return database.update(getTableName(), contentValues, whereClause, whereArgs);
     }
 
-    /** 查询并返回所有对象的集合 */
+    /**
+     * 查询并返回所有对象的集合
+     */
     public List<T> queryAll(SQLiteDatabase database) {
         return query(database, null, null);
     }
 
-    /** 按条件查询对象并返回集合 */
+    /**
+     * 按条件查询对象并返回集合
+     */
     public List<T> query(SQLiteDatabase database, String selection, String[] selectionArgs) {
         return query(database, null, selection, selectionArgs, null, null, null, null);
     }
 
-    /** 查询满足条件的一个结果 */
+    /**
+     * 查询满足条件的一个结果
+     */
     public T queryOne(SQLiteDatabase database, String selection, String[] selectionArgs) {
         List<T> query = query(database, null, selection, selectionArgs, null, null, null, "1");
         if (query.size() > 0) return query.get(0);
         return null;
     }
 
-    /** 按条件查询对象并返回集合 */
+    /**
+     * 按条件查询对象并返回集合
+     */
     public List<T> query(SQLiteDatabase database, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
         List<T> list = new ArrayList<>();
         Cursor cursor = null;
@@ -338,17 +368,23 @@ public abstract class BaseDao<T> {
         return list;
     }
 
-    /** 查询并返回所有对象的集合 */
+    /**
+     * 查询并返回所有对象的集合
+     */
     public List<T> queryAll() {
         return query(null, null);
     }
 
-    /** 按条件查询对象并返回集合 */
+    /**
+     * 按条件查询对象并返回集合
+     */
     public List<T> query(String selection, String[] selectionArgs) {
         return query(null, selection, selectionArgs, null, null, null, null);
     }
 
-    /** 查询满足条件的一个结果 */
+    /**
+     * 查询满足条件的一个结果
+     */
     public T queryOne(String selection, String[] selectionArgs) {
         long start = System.currentTimeMillis();
         List<T> query = query(null, selection, selectionArgs, null, null, null, "1");
@@ -356,7 +392,9 @@ public abstract class BaseDao<T> {
         return query.size() > 0 ? query.get(0) : null;
     }
 
-    /** 按条件查询对象并返回集合 */
+    /**
+     * 按条件查询对象并返回集合
+     */
     public List<T> query(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
         long start = System.currentTimeMillis();
         lock.lock();
@@ -383,6 +421,7 @@ public abstract class BaseDao<T> {
 
     /**
      * 弥补泛型的不足，在这里查询可以使用函数或者只是查询一个数据
+     *
      * @param sql
      * @return
      */
@@ -391,8 +430,8 @@ public abstract class BaseDao<T> {
         Cursor cursor = null;
         try {
             database.beginTransaction();
-            database.rawQuery(sql, null);
-             cursor.moveToFirst();
+            cursor = database.rawQuery(sql, null);
+            cursor.moveToFirst();
             String result = cursor.getCount() > 0 ? cursor.getString(0) : null;
             database.setTransactionSuccessful();
             return result;
@@ -408,7 +447,9 @@ public abstract class BaseDao<T> {
         void call(SQLiteDatabase database);
     }
 
-    /** 用于给外界提供事物开启的模板 */
+    /**
+     * 用于给外界提供事物开启的模板
+     */
     public void startTransaction(Action action) {
         lock.lock();
         try {
@@ -423,14 +464,20 @@ public abstract class BaseDao<T> {
         }
     }
 
-    /** 获取对应的表名 */
+    /**
+     * 获取对应的表名
+     */
     public abstract String getTableName();
 
     public abstract void unInit();
 
-    /** 将Cursor解析成对应的JavaBean */
+    /**
+     * 将Cursor解析成对应的JavaBean
+     */
     public abstract T parseCursorToBean(Cursor cursor);
 
-    /** 需要替换的列 */
+    /**
+     * 需要替换的列
+     */
     public abstract ContentValues getContentValues(T t);
 }

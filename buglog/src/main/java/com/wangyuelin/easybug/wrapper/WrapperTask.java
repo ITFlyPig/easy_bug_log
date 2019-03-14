@@ -1,5 +1,7 @@
 package com.wangyuelin.easybug.wrapper;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.wangyuelin.easybug.info.LogBean;
 import com.wangyuelin.easybug.info.LogBeanCache;
@@ -22,7 +24,13 @@ public class WrapperTask implements Runnable {
 
     @Override
     public void run() {
-        LogBean logBean = LogBeanCache.getInstance().get();
+        LogBean logBean = null;
+        try {
+//            logBean = LogBeanCache.getInstance().logbeanPool.borrowObject();
+            logBean = new LogBean();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (logBean == null) {//直接丢弃了
             return;
         }
@@ -42,6 +50,7 @@ public class WrapperTask implements Runnable {
             logBean.argsStr = JSON.toJSONString(logBean.args);
         }
 
+        Log.d("wyl", "将新产生的bean放入队列：" + logBean.toString());
         try {
             LogQueue.queue.put(logBean);
         } catch (InterruptedException e) {

@@ -87,7 +87,6 @@ public class DBStrategy {
 
             checkDB(dbInfo);
         }
-        LogBeanCache.getInstance().putBack(logBean);
         return result;
     }
 
@@ -117,7 +116,6 @@ public class DBStrategy {
 
         if (deleteTime > 0) {//开始删除
             LogManager.getInstance().delete(LogBean.TIME + "<= ?", new String[]{String.valueOf(deleteTime)});
-            dbInfo = null;
             initDBInfo();
         }
     }

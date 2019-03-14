@@ -58,14 +58,6 @@ public class LogManager extends BaseDao<LogBean> {
     }
 
 
-    /**
-     * 获取特定时间范围内的数据
-     * @param startTime
-     * @param endTime
-     * @return
-     */
-    public List<LogBean> query(long startTime, long endTime) {
-       return query(LogBean.TIME + ">? AND" + LogBean.TIME +" <?", new String[]{String.valueOf(startTime), String.valueOf(endTime)});
-    }
+
 
 }
