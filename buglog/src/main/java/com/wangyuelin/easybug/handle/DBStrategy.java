@@ -5,10 +5,10 @@ import android.text.TextUtils;
 import com.wangyuelin.easybug.db.DBUtils;
 import com.wangyuelin.easybug.db.LogManager;
 import com.wangyuelin.easybug.info.LogBean;
-import com.wangyuelin.easybug.info.LogBeanCache;
 import com.wangyuelin.easybug.utils.ParseUtil;
 
 import java.util.Calendar;
+import java.util.LinkedList;
 
 /**
  * 主要是对DB做限制：避免频繁db操作和db中数据过多
@@ -17,14 +17,17 @@ public class DBStrategy {
     private long maxDBNumber = 10000;//db中存储的数据的最大量
     private int numberStep = 1000; //数据量的操作步：比如是1000的话，如果当前超过的量不足1000则不用删除，否则删除，减少数据库操作次数
     private int maxDBTime = 2;//db中数据存储的最大时间，一般是两天天，因为今天发生bug，明天就会解决了,单位是天
+    private LinkedList<LogBean> temoList;//临时存储数据
 
     public DBStrategy(long maxDBNumber, int numberStep, int maxDBTime) {
         this.maxDBNumber = maxDBNumber;
         this.numberStep = numberStep;
         this.maxDBTime = maxDBTime;
+
     }
 
     public DBStrategy() {
+        temoList = new LinkedList<>();
     }
 
     /**
@@ -66,33 +69,39 @@ public class DBStrategy {
 
     /**
      * 插入数据库
+     *
      * @param logBean
      * @return
      */
-    public synchronized boolean insert(LogBean logBean) {
+    public synchronized void insert(LogBean logBean) {
         if (logBean == null) {
-            return false;
+            return;
         }
-        initDBInfo();
-        boolean result = LogManager.getInstance().insert(logBean);
-        //更新缓存信息
-        if (result) {
-            if (dbInfo.minTime < logBean.time) {
-                dbInfo.minTime = logBean.time;
+        if (temoList.size() < 100) {//数值太大可能有些log就会丢了，数值太小则会频繁的存储
+            temoList.add(logBean);
+        } else {
+            initDBInfo();
+            boolean result = LogManager.getInstance().insert(temoList);
+            //更新缓存信息
+            if (result) {
+                if (dbInfo.minTime > temoList.get(0).time) {//队列第一个
+                    dbInfo.minTime = logBean.time;
+                }
+                if (dbInfo.maxTime < temoList.get(temoList.size() - 1).time) {//队列最后一个
+                    dbInfo.maxTime = logBean.time;
+                }
+                dbInfo.num += temoList.size();
+                temoList.clear();;
+                checkDB(dbInfo);
             }
-            if (dbInfo.maxTime > logBean.time) {
-                dbInfo.maxTime = logBean.time;
-            }
-            dbInfo.num++;
+        }
 
-            checkDB(dbInfo);
-        }
-        return result;
     }
 
 
     /**
      * 检查数据库中日志是否需要删除一些
+     *
      * @param dbInfo
      */
     private synchronized void checkDB(DBInfo dbInfo) {
