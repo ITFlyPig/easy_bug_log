@@ -55,7 +55,7 @@ public class DBUtils {
             }
             count = cursor.getInt(0);
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             if (cursor != null) cursor.close();
         }
@@ -70,7 +70,7 @@ public class DBUtils {
             cursor = db.rawQuery("SELECT * FROM " + tableName + " LIMIT 0", null);
             return cursor != null && cursor.getColumnIndex(fieldName) != -1;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
             return false;
         } finally {
             if (cursor != null) {

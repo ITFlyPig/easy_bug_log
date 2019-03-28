@@ -22,7 +22,7 @@ import android.util.Log;
  *
  * 日志的工具类
  */
-public class OkLogger {
+public class MyLogger {
     private static boolean isLogEnable = true;
 
     private static String tag = "OkGo";

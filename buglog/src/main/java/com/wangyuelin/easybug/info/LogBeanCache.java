@@ -1,20 +1,22 @@
 package com.wangyuelin.easybug.info;
 
-import org.apache.commons.pool2.BasePooledObjectFactory;
-import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.PooledObject;
-import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
+import com.wangyuelin.easybug.cache.BasePooledObjectFactory;
+import com.wangyuelin.easybug.cache.ObjectPool;
+import com.wangyuelin.easybug.cache.PoolConf;
+
+/**
+ * 缓存bean的实例
+ */
 public class LogBeanCache {
 
     public ObjectPool<LogBean> logbeanPool;
 
     private LogBeanCache() {
-        GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-        config.setMaxTotal(100);
-        logbeanPool = new GenericObjectPool<>(new LogBeanFactory(), config);
+        PoolConf config = new PoolConf.Builder()
+                .setMaxSize(300)
+                .build();
+        logbeanPool = new ObjectPool<LogBean>(config, new LogBeanFactory());
     }
 
     private static class Holder {
@@ -29,15 +31,38 @@ public class LogBeanCache {
     private static class LogBeanFactory extends BasePooledObjectFactory<LogBean> {
 
         @Override
-        public LogBean create() throws Exception {
+        public LogBean create()  {
             return new LogBean();
         }
 
         @Override
-        public PooledObject<LogBean> wrap(LogBean obj) {
-            return new DefaultPooledObject<>(obj);
+        public void reset(LogBean logBean) {
+            if (logBean == null) {
+                return;
+            }
+            logBean.reset();
         }
 
+
     }
+
+    /**
+     * 借出实体
+     * @return
+     */
+    public LogBean borrowObject(){
+        return logbeanPool.borrowObject();
+    }
+
+    /**
+     * 归还实体
+     * @param logBean
+     */
+    public void returnObject(LogBean logBean) {
+        logbeanPool.returnObject(logBean);
+    }
+
+
+
 
 }

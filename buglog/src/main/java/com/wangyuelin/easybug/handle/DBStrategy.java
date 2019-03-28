@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.wangyuelin.easybug.db.DBUtils;
 import com.wangyuelin.easybug.db.LogManager;
 import com.wangyuelin.easybug.info.LogBean;
+import com.wangyuelin.easybug.info.LogBeanCache;
 import com.wangyuelin.easybug.utils.ParseUtil;
 
 import java.util.Calendar;
@@ -17,7 +18,7 @@ public class DBStrategy {
     private long maxDBNumber = 10000;//db中存储的数据的最大量
     private int numberStep = 1000; //数据量的操作步：比如是1000的话，如果当前超过的量不足1000则不用删除，否则删除，减少数据库操作次数
     private int maxDBTime = 2;//db中数据存储的最大时间，一般是两天天，因为今天发生bug，明天就会解决了,单位是天
-    private LinkedList<LogBean> temoList;//临时存储数据
+    private LinkedList<LogBean> tempList;//临时存储数据
 
     public DBStrategy(long maxDBNumber, int numberStep, int maxDBTime) {
         this.maxDBNumber = maxDBNumber;
@@ -27,7 +28,7 @@ public class DBStrategy {
     }
 
     public DBStrategy() {
-        temoList = new LinkedList<>();
+        tempList = new LinkedList<>();
     }
 
     /**
@@ -77,22 +78,25 @@ public class DBStrategy {
         if (logBean == null) {
             return;
         }
-        if (temoList.size() < 100) {//数值太大可能有些log就会丢了，数值太小则会频繁的存储
-            temoList.add(logBean);
-        } else {
+        tempList.add(logBean);
+        if (tempList.size() >= 100) {//数值太大可能有些log就会丢了，数值太小则会频繁的存储
             initDBInfo();
-            boolean result = LogManager.getInstance().insert(temoList);
+            boolean result = LogManager.getInstance().insert(tempList);
             //更新缓存信息
             if (result) {
-                if (dbInfo.minTime > temoList.get(0).time) {//队列第一个
+                if (dbInfo.minTime > tempList.get(0).time) {//队列第一个
                     dbInfo.minTime = logBean.time;
                 }
-                if (dbInfo.maxTime < temoList.get(temoList.size() - 1).time) {//队列最后一个
+                if (dbInfo.maxTime < tempList.get(tempList.size() - 1).time) {//队列最后一个
                     dbInfo.maxTime = logBean.time;
                 }
-                dbInfo.num += temoList.size();
-                temoList.clear();;
+                dbInfo.num += tempList.size();
                 checkDB(dbInfo);
+
+                for (LogBean bean : tempList) {
+                    LogBeanCache.getInstance().returnObject(bean);
+                }
+                tempList.clear();
             }
         }
 

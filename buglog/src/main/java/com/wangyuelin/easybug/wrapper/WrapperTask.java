@@ -10,7 +10,7 @@ import com.wangyuelin.easybug.log.LogQueue;
 public class WrapperTask implements Runnable {
     private String className;
     private String methodName;
-    private  Object[] args;
+    private Object[] args;
     public Exception exception;//异常
     public Error error;        //错误
 
@@ -25,12 +25,7 @@ public class WrapperTask implements Runnable {
     @Override
     public void run() {
         LogBean logBean = null;
-        try {
-//            logBean = LogBeanCache.getInstance().logbeanPool.borrowObject();
-            logBean = new LogBean();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        logBean = LogBeanCache.getInstance().borrowObject();
         if (logBean == null) {//直接丢弃了
             return;
         }

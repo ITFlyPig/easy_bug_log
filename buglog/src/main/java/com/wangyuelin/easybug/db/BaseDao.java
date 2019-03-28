@@ -68,11 +68,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " insertT");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " insertT");
         }
         return false;
     }
@@ -99,11 +99,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " insertList");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " insertList");
         }
         return false;
     }
@@ -115,7 +115,7 @@ public abstract class BaseDao<T> {
             }
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
             return false;
         }
     }
@@ -146,11 +146,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " delete");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " delete");
         }
         return false;
     }
@@ -173,11 +173,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " deleteList");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " deleteList");
         }
         return false;
     }
@@ -201,11 +201,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceT");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " replaceT");
         }
         return false;
     }
@@ -223,11 +223,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceContentValues");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " replaceContentValues");
         }
         return false;
     }
@@ -248,11 +248,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceList");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " replaceList");
         }
         return false;
     }
@@ -264,7 +264,7 @@ public abstract class BaseDao<T> {
             }
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
             return false;
         }
     }
@@ -282,11 +282,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " updateT");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " updateT");
         }
         return false;
     }
@@ -310,11 +310,11 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " updateContentValues");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " updateContentValues");
         }
         return false;
     }
@@ -361,7 +361,7 @@ public abstract class BaseDao<T> {
                 list.add(parseCursorToBean(cursor));
             }
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             closeDatabase(null, cursor);
         }
@@ -388,7 +388,7 @@ public abstract class BaseDao<T> {
     public T queryOne(String selection, String[] selectionArgs) {
         long start = System.currentTimeMillis();
         List<T> query = query(null, selection, selectionArgs, null, null, null, "1");
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " queryOne");
+        MyLogger.v(TAG, System.currentTimeMillis() - start + " queryOne");
         return query.size() > 0 ? query.get(0) : null;
     }
 
@@ -408,12 +408,12 @@ public abstract class BaseDao<T> {
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             closeDatabase(null, cursor);
             database.endTransaction();
             lock.unlock();
-            OkLogger.v(TAG, System.currentTimeMillis() - start + " query");
+            MyLogger.v(TAG, System.currentTimeMillis() - start + " query");
         }
         return list;
     }
@@ -457,7 +457,7 @@ public abstract class BaseDao<T> {
             action.call(database);
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
+            MyLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             lock.unlock();

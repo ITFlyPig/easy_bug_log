@@ -22,6 +22,8 @@ public class HandleTask implements Runnable {
             if (logBean != null) {//加工处理，然后存入数据库
                 Log.d("wyl", "从队列中获取日志bean，然后插入到数据库：" + logBean.toString());
                 dbStrategy.insert(logBean);
+
+
             }
         }
     }

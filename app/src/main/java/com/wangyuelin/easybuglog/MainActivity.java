@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.whole).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 200; i++) {
                     AopLog.methodEnter("com.wangyuelin.easybuglog.MainActivity", "onClick" + i, new Object[]{savedInstanceState},
                             new IllegalStateException("状态不对"), null);
                 }
